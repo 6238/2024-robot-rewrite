@@ -6,6 +6,6 @@ package frc.robot;
 
 /** Constants for the robot. */
 public final class Constants {
-    /** The robot's maximum angular velocity. */
-    public final static double MAX_ANGULAR_VELOCITY = 2.0 * Math.PI; // 2pi rad/sec = 1 rev/sec
+  /** The robot's maximum angular velocity. */
+  public static final double MAX_ANGULAR_VELOCITY = 2.0 * Math.PI; // 2pi rad/sec = 1 rev/sec
 }
