@@ -11,10 +11,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.SwerveSubsystem;
 import java.io.File;
 
@@ -28,9 +26,8 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
 
-    DriveCommand driveCmd =
-        new DriveCommand(
-            swerve,
+    swerve.setDefaultCommand(
+        swerve.driveCommand(
             () ->
                 MathUtil.applyDeadband(
                     -driverXbox.getLeftY(),
@@ -44,23 +41,17 @@ public class RobotContainer {
             () ->
                 MathUtil.applyDeadband(
                     -driverXbox.getRightX(),
-                    0.08)); // Rotation for FRC is CCW-positive, so need to invert sign
-    swerve.setDefaultCommand(driveCmd);
+                    0.08))); // Rotation for FRC is CCW-positive, so need to invert sign));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auton Path", autoChooser);
   }
 
   private void configureBindings() {
-    driverXbox.start().onTrue((new InstantCommand(swerve::zeroGyro)));
+    driverXbox.start().onTrue(swerve.zeroYawCommand());
 
     // Reset pose-estimation when starting auton
-    RobotModeTriggers.autonomous()
-        .onTrue(
-            new InstantCommand(
-                () -> {
-                  swerve.resetGyroTo(swerve.getPose().getRotation());
-                }));
+    RobotModeTriggers.autonomous().onTrue(swerve.resetGyroCommand());
   }
 
   public Command getAutonomousCommand() {

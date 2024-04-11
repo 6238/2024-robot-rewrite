@@ -24,8 +24,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import java.io.File;
 import java.util.Optional;
+import java.util.function.DoubleSupplier;
 import org.photonvision.EstimatedRobotPose;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -66,26 +68,31 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public SwerveSubsystem(File directory) {
     // // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
-    // //  In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
-    // //  The encoder resolution per motor revolution is 1 per motor revolution.
-    // double angleConversionFactor = SwerveMath.calculateDegreesPerSteeringRotation(12.8, 1);
-    // // Motor conversion factor is (PI * WHEEL DIAMETER) / (GEAR RATIO * ENCODER RESOLUTION).
-    // //  In this case the wheel diameter is 4 inches.
-    // //  The gear ratio is 6.75 motor revolutions per wheel rotation.
-    // //  The encoder resolution per motor revolution is 1 per motor revolution.
-    // double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4),
+    // // In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
+    // // The encoder resolution per motor revolution is 1 per motor revolution.
+    // double angleConversionFactor =
+    // SwerveMath.calculateDegreesPerSteeringRotation(12.8, 1);
+    // // Motor conversion factor is (PI * WHEEL DIAMETER) / (GEAR RATIO * ENCODER
+    // RESOLUTION).
+    // // In this case the wheel diameter is 4 inches.
+    // // The gear ratio is 6.75 motor revolutions per wheel rotation.
+    // // The encoder resolution per motor revolution is 1 per motor revolution.
+    // double driveConversionFactor =
+    // SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4),
     // 6.75, 1);
     // System.out.println("\"conversionFactor\": {");
     // System.out.println("\t\"angle\": " + angleConversionFactor + ",");
     // System.out.println("\t\"drive\": " + driveConversionFactor);
     // System.out.println("}");
 
-    // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being
+    // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
+    // objects being
     // created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try {
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed);
-      // Alternative method if you don't want to supply the conversion factor via JSON files.
+      // Alternative method if you don't want to supply the conversion factor via JSON
+      // files.
 
       double driveConversionFactor =
           SwerveMath.calculateMetersPerRotation(
@@ -106,15 +113,16 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   // /**
-  //  * Construct the swerve drive.
-  //  *
-  //  * @param driveCfg      SwerveDriveConfiguration for the swerve.
-  //  * @param controllerCfg Swerve Controller.
-  //  */
-  // public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration
+  // * Construct the swerve drive.
+  // *
+  // * @param driveCfg SwerveDriveConfiguration for the swerve.
+  // * @param controllerCfg Swerve Controller.
+  // */
+  // public SwerveSubsystem(SwerveDriveConfiguration driveCfg,
+  // SwerveControllerConfiguration
   // controllerCfg)
   // {
-  //   swerveDrive = new SwerveDrive(driveCfg, controllerCfg, maximumSpeed);
+  // swerveDrive = new SwerveDrive(driveCfg, controllerCfg, maximumSpeed);
   // }
 
   /**
@@ -218,12 +226,20 @@ public class SwerveSubsystem extends SubsystemBase {
   /**
    * Resets the gyro angle to zero and resets odometry to the same position, but facing toward 0.
    */
-  public void zeroGyro() {
+  private void zeroGyro() {
     swerveDrive.zeroGyro();
   }
 
+  public Command zeroYawCommand() {
+    return runOnce(
+        () -> {
+          this.zeroGyro();
+        });
+  }
+
   public void setGyroOffset() {
-    // swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d(radians)));
+    // swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), new
+    // Rotation2d(radians)));
     // swerveDrive.zeroGyro();
     // swerveDrive.setImuOffset(swerveDrive.getPose().getRotation());
   }
@@ -323,7 +339,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   /** Lock the swerve drive to prevent it from moving. */
-  public void lock() {
+  private void lock() {
     swerveDrive.lockPose();
   }
 
@@ -334,12 +350,6 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public Rotation2d getPitch() {
     return swerveDrive.getPitch();
-  }
-
-  /** Add a fake vision reading for testing purposes. */
-  public void addFakeVisionReading() {
-    // swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)),
-    // Timer.getFPGATimestamp(), true, 4);
   }
 
   /** Setup AutoBuilder for PathPlanner. */
@@ -368,7 +378,8 @@ public class SwerveSubsystem extends SubsystemBase {
             // Default path replanning config. See the API for the options here
             ),
         () -> {
-          // Boolean supplier that controls when the path will be mirrored for the red alliance
+          // Boolean supplier that controls when the path will be mirrored for the red
+          // alliance
           // This will flip the path being followed to the red side of the field.
           // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
           var alliance = DriverStation.getAlliance();
@@ -393,21 +404,66 @@ public class SwerveSubsystem extends SubsystemBase {
       resetOdometry(new Pose2d(path.getPoint(0).position, getHeading()));
     }
 
-    // Create a path following command using AutoBuilder. This will also trigger event markers.
+    // Create a path following command using AutoBuilder. This will also trigger
+    // event markers.
     return AutoBuilder.followPath(path);
   }
 
-  public void addVisionPose(EstimatedRobotPose pose, Matrix<N3, N1> stdev) {
+  private void addVisionPose(EstimatedRobotPose pose, Matrix<N3, N1> stdev) {
     swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, stdev);
   }
 
-  public void addVisionPose(EstimatedRobotPose pose) {
+  private void addVisionPose(EstimatedRobotPose pose) {
     swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
   }
 
-  public void resetGyroTo(Rotation2d rot) {
+  private void resetGyroTo(Rotation2d rot) {
     // if our gyro isn't a navx, this will throw a ClassCastException
     NavXSwerve imu = (NavXSwerve) swerveDrive.getGyro();
     imu.setOffset(new Rotation3d(0, 0, rot.getRadians()));
+  }
+
+  /**
+   * Reset the IMU to the current measured rotation.
+   *
+   * @return a Command
+   */
+  public Command resetGyroCommand() {
+    return runOnce(
+        () -> {
+          this.resetGyroTo(this.getPose().getRotation());
+        });
+  }
+
+  /**
+   * Command to drive the robot using translative values and heading as a setpoint.
+   *
+   * @param translationX Translation in the X direction. Cubed for smoother controls.
+   * @param translationY Translation in the Y direction. Cubed for smoother controls.
+   * @param headingX Heading X to calculate angle of the joystick.
+   * @param headingY Heading Y to calculate angle of the joystick.
+   * @return Drive command.
+   */
+  public Command driveCommand(
+      DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotationSpeed) {
+    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
+    // correction for this kind of control.
+    return run(
+        () -> {
+          Optional<Alliance> ally = DriverStation.getAlliance();
+          double sign = 1.0;
+          if (ally.isPresent()) {
+            sign = (ally.get() == Alliance.Blue) ? 1.0 : -1.0;
+          }
+          double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
+          double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
+          // Make the robot move
+          double rotation = rotationSpeed.getAsDouble() * Constants.MAX_ANGULAR_VELOCITY;
+
+          Translation2d translation =
+              new Translation2d(
+                  sign * xInput * this.maximumSpeed, sign * yInput * this.maximumSpeed);
+          this.drive(translation, rotation, true);
+        });
   }
 }
