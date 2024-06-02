@@ -135,6 +135,9 @@ public class IntakeOuttakeSubsystem extends SubsystemBase {
   public Command ejectCommand() {
     return this.setMotorsCommand(-Constants.Speeds.INTAKE_SPEED, 0);
   }
+  public Command nudgeCommand() {
+    return this.setMotorsCommand(Constants.Speeds.INTAKE_SPEED * 0.4, 0);
+  }
 
   public Trigger stalled() {
     return new Trigger(() -> !limitSwitch1.get() || !limitSwitch2.get() || !limitSwitch3.get());
