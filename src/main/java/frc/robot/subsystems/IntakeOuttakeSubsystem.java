@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.function.DoubleSupplier;
-
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel;
@@ -13,7 +11,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,16 +35,18 @@ public class IntakeOuttakeSubsystem extends SubsystemBase {
   private DigitalInput limitSwitch1 = new DigitalInput(9);
   private DigitalInput limitSwitch2 = new DigitalInput(8);
   private DigitalInput limitSwitch3 = new DigitalInput(7);
+  private boolean waitingForNote = false;
 
-  private Alert motorFailed = new Alert("An intake/outtake motor failed to config", AlertType.ERROR);
-
+  private Alert motorFailed =
+      new Alert("An intake/outtake motor failed to config", AlertType.ERROR);
 
   /** Creates a new IntakeOuttakeSubsystem. */
   public IntakeOuttakeSubsystem() {
 
     intakeMotor = new CANSparkMax(IDs.INTAKE_MOTOR, CANSparkLowLevel.MotorType.kBrushless);
     outtakeTopMotor = new CANSparkMax(IDs.OUTTAKE_TOP_MOTOR, CANSparkLowLevel.MotorType.kBrushless);
-    outtakeBottomMotor = new CANSparkMax(IDs.OUTTAKE_BOTTOM_MOTOR, CANSparkLowLevel.MotorType.kBrushless);
+    outtakeBottomMotor =
+        new CANSparkMax(IDs.OUTTAKE_BOTTOM_MOTOR, CANSparkLowLevel.MotorType.kBrushless);
 
     // Reset each motor so the configs are known-good
     if (intakeMotor.restoreFactoryDefaults() != REVLibError.kOk) {
@@ -55,10 +54,10 @@ public class IntakeOuttakeSubsystem extends SubsystemBase {
     }
     if (outtakeTopMotor.restoreFactoryDefaults() != REVLibError.kOk) {
       motorFailed.set(true);
-    }  
+    }
     if (outtakeBottomMotor.restoreFactoryDefaults() != REVLibError.kOk) {
       motorFailed.set(true);
-    }  
+    }
 
     intakeMotor.setInverted(false);
 
@@ -79,15 +78,15 @@ public class IntakeOuttakeSubsystem extends SubsystemBase {
     bottom_encoder = outtakeBottomMotor.getEncoder();
     intake_encoder = intakeMotor.getEncoder();
 
-    kP = OuttakeGains.kP; 
+    kP = OuttakeGains.kP;
     kI = OuttakeGains.kI;
     kD = OuttakeGains.kD;
     // SmartDashboard.putNumber("shooterKp", kP);
     // SmartDashboard.putNumber("shooterKi", kI);
     // SmartDashboard.putNumber("shooterKd", kD);
-    kIz = OuttakeGains.kIz; 
-    kFF = OuttakeGains.kFF; 
-    kMaxOutput = OuttakeGains.kMaxOutput; 
+    kIz = OuttakeGains.kIz;
+    kFF = OuttakeGains.kFF;
+    kMaxOutput = OuttakeGains.kMaxOutput;
     kMinOutput = OuttakeGains.kMinOutput;
     maxRPM = OuttakeGains.maxRPM;
 
@@ -106,7 +105,6 @@ public class IntakeOuttakeSubsystem extends SubsystemBase {
     bottom_pidController.setOutputRange(kMinOutput, kMaxOutput);
 
     SmartDashboard.putNumber("shooterRPM", 1000.0);
-
   }
 
   @Override
@@ -115,17 +113,21 @@ public class IntakeOuttakeSubsystem extends SubsystemBase {
   }
 
   public Command setMotorsCommand(double intake, double outtake) {
-    return runOnce(() -> {
-      intakeMotor.set(intake);
-      SmartDashboard.putNumber("shooterSpeedSetpoint", outtake);
-      top_pidController.setReference(-outtake, CANSparkMax.ControlType.kVelocity);
-      bottom_pidController.setReference(outtake, CANSparkMax.ControlType.kVelocity);
-    });
+    return runOnce(
+        () -> {
+          intakeMotor.set(intake);
+          SmartDashboard.putNumber("shooterSpeedSetpoint", outtake);
+          top_pidController.setReference(-outtake, CANSparkMax.ControlType.kVelocity);
+          bottom_pidController.setReference(outtake, CANSparkMax.ControlType.kVelocity);
+        });
+  }
+
+  public Command intakeCommand() {
+    return this.setMotorsCommand(Constants.Speeds.INTAKE_SPEED, 0);
   }
 
   public Command startOutakeCommand() {
     return this.setMotorsCommand(0.0, Constants.Speeds.OUTTAKE_SPEED);
-
   }
 
   public Command stopCommand() {
@@ -135,11 +137,11 @@ public class IntakeOuttakeSubsystem extends SubsystemBase {
   public Command ejectCommand() {
     return this.setMotorsCommand(-Constants.Speeds.INTAKE_SPEED, 0);
   }
+
   public Command nudgeCommand() {
     return this.setMotorsCommand(Constants.Speeds.INTAKE_SPEED * 0.4, 0);
   }
 
-  public Trigger stalled() {
-    return new Trigger(() -> !limitSwitch1.get() || !limitSwitch2.get() || !limitSwitch3.get());
-  }
+  public final Trigger stalled =
+      new Trigger(() -> !limitSwitch1.get() || !limitSwitch2.get() || !limitSwitch3.get());
 }
