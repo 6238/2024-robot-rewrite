@@ -2,7 +2,6 @@ package frc.robot.logging;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -42,19 +41,6 @@ public class Logger {
 
     public static void logCommandLifetimeMessage(Command command, String message) {
         DataLogManager.log(String.format("%d - COMMAND - ROBOT - %d", commandIdentifier(command), command.getName(), message));
-    }
-
-    private static String generateParentTreeMessage(ArrayList<Command> parents) {
-        StringBuilder parentTreeString = new StringBuilder();
-        for (Command command : parents) {
-            parentTreeString.append(commandIdentifier(command));
-            parentTreeString.append(",");
-        }
-        return parentTreeString.toString();
-    }
-
-    public static void logCommandLifetimeMessageWithParentTree(Command command, ArrayList<Command> parents, String message) {
-        DataLogManager.log(String.format("%d - COMMAND - %d - %d", commandIdentifier(command), generateParentTreeMessage(parents), message));
     }
 
     public static void setup() {
