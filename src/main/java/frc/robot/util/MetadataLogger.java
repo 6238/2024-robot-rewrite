@@ -11,7 +11,8 @@ import frc.robot.BuildConstants;
 /** This class logs pertinent metadata to NetworkTables. */
 public class MetadataLogger {
   /** Private constructor because this should never be instantiated. */
-  private MetadataLogger() {};
+  private MetadataLogger() {}
+  ;
 
   // https://github.com/Mechanical-Advantage/AdvantageScope/blob/main/docs/tabs/METADATA.md
   // Data put in the `/Metadata/` table as strings is hidden in AdvantageScope by default,
@@ -23,22 +24,25 @@ public class MetadataLogger {
         .getStringTopic("/Metadata/BuildDate")
         .publish()
         .set(BuildConstants.BUILD_DATE);
-    
+
     NetworkTableInstance.getDefault()
         .getStringTopic("/Metadata/GitCommitDate")
         .publish()
         .set(BuildConstants.GIT_DATE);
-    
+
     NetworkTableInstance.getDefault()
         .getStringTopic("/Metadata/GitCommitHash")
         .publish()
         .set(BuildConstants.GIT_SHA);
-    
+
     NetworkTableInstance.getDefault()
         .getStringTopic("/Metadata/GitDirty")
         .publish()
-        .set(BuildConstants.DIRTY == 1 ? "✏️ Uncommitted changes present" : "✅ All changes committed");
-    
+        .set(
+            BuildConstants.DIRTY == 1
+                ? "✏️ Uncommitted changes present"
+                : "✅ All changes committed");
+
     NetworkTableInstance.getDefault()
         .getStringTopic("/Metadata/GitBranch")
         .publish()
@@ -48,10 +52,10 @@ public class MetadataLogger {
         .getStringTopic("/Metadata/RuntimeType")
         .publish()
         .set(RobotBase.getRuntimeType().toString());
-    
+
     NetworkTableInstance.getDefault()
         .getStringTopic("/Metadata/ProjectName")
         .publish()
-        .set(BuildConstants.MAVEN_NAME);    
+        .set(BuildConstants.MAVEN_NAME);
   }
 }
