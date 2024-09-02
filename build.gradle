@@ -158,5 +158,4 @@ gversion {
     dateFormat   = "yyyy-MM-dd HH:mm:ss z"
     timeZone     = "America/Los_Angeles" 
     indent       = "  "
-    annotate     = true
 }
