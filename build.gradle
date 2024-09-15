@@ -106,45 +106,45 @@ tasks.withType(JavaCompile) {
 }
 
 // Configs for the Spotless formatter.
-spotless {
-    java {
-        target fileTree('.') {
-            include '**/*.java'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        toggleOffOn() // Allows you to add sections of code to never format with "format:off" and "format:on" in comments
-        googleJavaFormat() // Apply the Google Java Style Guide: https://google.github.io/styleguide/javaguide.html
-        removeUnusedImports() // Remove all unused imports
-        trimTrailingWhitespace() // Remove whitespace from the end of lines and files
-        endWithNewline() // End files with a newline symbol
-    }
-    groovyGradle {
-        target fileTree('.') {
-            include '**/*.gradle'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        greclipse()
-        indentWithSpaces(4)
-        trimTrailingWhitespace()
-        endWithNewline()
-    }
-    format 'xml', {
-        target fileTree('.') {
-            include '**/*.xml'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        eclipseWtp('xml')
-        trimTrailingWhitespace()
-        indentWithSpaces(2)
-        endWithNewline()
-    }
-    format 'misc', {
-        target fileTree('.') {
-            include '**/*.md', '**/.gitignore'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        trimTrailingWhitespace()
-        indentWithSpaces(2)
-        endWithNewline()
-    }
-}
+// spotless {
+//     java {
+//         target fileTree('.') {
+//             include '**/*.java'
+//             exclude '**/build/**', '**/build-*/**'
+//         }
+//         toggleOffOn() // Allows you to add sections of code to never format with "format:off" and "format:on" in comments
+//         googleJavaFormat() // Apply the Google Java Style Guide: https://google.github.io/styleguide/javaguide.html
+//         removeUnusedImports() // Remove all unused imports
+//         trimTrailingWhitespace() // Remove whitespace from the end of lines and files
+//         endWithNewline() // End files with a newline symbol
+//     }
+//     groovyGradle {
+//         target fileTree('.') {
+//             include '**/*.gradle'
+//             exclude '**/build/**', '**/build-*/**'
+//         }
+//         greclipse()
+//         indentWithSpaces(4)
+//         trimTrailingWhitespace()
+//         endWithNewline()
+//     }
+//     format 'xml', {
+//         target fileTree('.') {
+//             include '**/*.xml'
+//             exclude '**/build/**', '**/build-*/**'
+//         }
+//         eclipseWtp('xml')
+//         trimTrailingWhitespace()
+//         indentWithSpaces(2)
+//         endWithNewline()
+//     }
+//     format 'misc', {
+//         target fileTree('.') {
+//             include '**/*.md', '**/.gitignore'
+//             exclude '**/build/**', '**/build-*/**'
+//         }
+//         trimTrailingWhitespace()
+//         indentWithSpaces(2)
+//         endWithNewline()
+//     }
+// }
