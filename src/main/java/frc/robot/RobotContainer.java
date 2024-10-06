@@ -20,6 +20,8 @@ import frc.robot.Constants.Arm.ArmStates;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeOuttakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
+
 import java.io.File;
 
 /**
@@ -31,6 +33,7 @@ public class RobotContainer {
   SwerveSubsystem swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
   ArmSubsystem arm = new ArmSubsystem();
   IntakeOuttakeSubsystem intake = new IntakeOuttakeSubsystem();
+  VisionSubsystem vision = new VisionSubsystem(swerve);
   CommandXboxController driverXbox = new CommandXboxController(0);
 
   private final SendableChooser<Command> autoChooser;

@@ -409,11 +409,11 @@ public class SwerveSubsystem extends SubsystemBase {
     return AutoBuilder.followPath(path);
   }
 
-  private void addVisionPose(EstimatedRobotPose pose, Matrix<N3, N1> stdev) {
+  public void addVisionPose(EstimatedRobotPose pose, Matrix<N3, N1> stdev) {
     swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, stdev);
   }
 
-  private void addVisionPose(EstimatedRobotPose pose) {
+  public void addVisionPose(EstimatedRobotPose pose) {
     swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
   }
 
