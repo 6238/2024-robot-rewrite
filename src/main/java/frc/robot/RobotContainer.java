@@ -20,6 +20,7 @@ import frc.robot.Constants.Arm.ArmStates;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeOuttakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.util.MetadataLogger;
 import java.io.File;
 
 /**
@@ -57,6 +58,9 @@ public class RobotContainer {
     // Initialize autonomous chooser
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auton Path", autoChooser);
+
+    // Log metadata
+    MetadataLogger.logMetadata();
   }
 
   /**
