@@ -12,11 +12,11 @@ import java.util.Map;
 public final class Constants {
 
   public final class IDs {
-    public static final int INTAKE_MOTOR = 2;
-    public static final int OUTTAKE_TOP_MOTOR = 3;
-    public static final int OUTTAKE_BOTTOM_MOTOR = 4;
-    public static final int ANGLE_MOTOR = 31;
-    public static final int ROLLER_MOTOR = 30;
+    public static final int INTAKE_MOTOR = 41;
+    public static final int OUTTAKE_TOP_MOTOR = 42;
+    public static final int OUTTAKE_BOTTOM_MOTOR = 43;
+    public static final int ANGLE_MOTOR = 62;
+    public static final int ROLLER_MOTOR = 61;
   }
 
   /** The robot's maximum angular velocity. */

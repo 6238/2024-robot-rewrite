@@ -53,8 +53,7 @@ public class RobotContainer {
             // invert sign
             () ->
                 MathUtil.applyDeadband(
-                    -driverXbox
-                        .getRightX(), // Rotation for FRC is CCW-positive, so need to invert sign
+                    -driverXbox.getRightX(), // Rotation for FRC is CCW-positive, so need to invert sign
                     0.08)));
     // Initialize autonomous chooser
     autoChooser = AutoBuilder.buildAutoChooser();
