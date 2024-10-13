@@ -21,14 +21,14 @@ import org.photonvision.EstimatedRobotPose;
 
 public class VisionSubsystem extends SubsystemBase {
   private AprilTagFieldLayout layout;
-  private final Transform3d robotToCam_A =
+  private final Transform3d robotToCam_B =
       new Transform3d(
           new Translation3d(Inches.of(-13.5), Inches.of(-13.5), Inches.of(10.5)),
           new Rotation3d(
               Degrees.of(180).in(Radians),
               Degrees.of(-55).in(Radians),
               Degrees.of(210).in(Radians)));
-  private final Transform3d robotToCam_B =
+  private final Transform3d robotToCam_A =
       new Transform3d(
           new Translation3d(Inches.of(-13.5), Inches.of(13.5), Inches.of(10.5)),
           new Rotation3d(
@@ -41,8 +41,12 @@ public class VisionSubsystem extends SubsystemBase {
 
   private PopcornCamera camB;
 
+  private SwerveSubsystem swerve;
+
   /** Creates a new VisionSubsystem. */
-  public VisionSubsystem() {
+  public VisionSubsystem(SwerveSubsystem swerve) {
+
+    this.swerve = swerve;
 
     try {
       layout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
@@ -55,10 +59,17 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-    poseA = camA.update();
-    poseB = camB.update();
-  }
+    public void periodic() {
+        Optional<EstimatedRobotPose> poseA = camA.update();
+        if (poseA.isPresent()) {
+            swerve.addVisionPose(poseA.get(), Constants.VISION_STDDEV);
+        }
+
+        Optional<EstimatedRobotPose> poseB = camB.update();
+        if (poseB.isPresent()) {
+            swerve.addVisionPose(poseB.get(), Constants.VISION_STDDEV);
+        }
+    }
 
   public Trigger hasPose() {
     return new Trigger(() -> poseA.isPresent() || poseB.isPresent());

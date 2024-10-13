@@ -6,6 +6,10 @@ package frc.robot;
 
 import static java.util.Map.entry;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+
 import java.util.Map;
 
 /** Constants for the robot. */
@@ -80,4 +84,6 @@ public final class Constants {
     public static final double SHOOTER_TRANSFER_SPEED = 350;
     public static final double AMP_TRANSFER_SPEED = -.35;
   }
+
+  public static final Matrix<N3, N1> VISION_STDDEV = new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {2.0, 2.0, 2.5});
 }
