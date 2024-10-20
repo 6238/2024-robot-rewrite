@@ -111,7 +111,7 @@ tasks.withType(JavaCompile) {
 //     java {
 //         target fileTree('.') {
 //             include '**/*.java'
-//             exclude '**/build/**', '**/build-*/**'
+//             exclude '**/build/**', '**/build-*/**', '**/BuildConstants.java'
 //         }
 //         toggleOffOn() // Allows you to add sections of code to never format with "format:off" and "format:on" in comments
 //         googleJavaFormat() // Apply the Google Java Style Guide: https://google.github.io/styleguide/javaguide.html
@@ -149,3 +149,13 @@ tasks.withType(JavaCompile) {
 //         endWithNewline()
 //     }
 // }
+
+project.compileJava.dependsOn(createVersionFile)
+gversion {
+    srcDir       = "src/main/java/"
+    classPackage = "frc.robot"
+    className    = "BuildConstants"
+    dateFormat   = "yyyy-MM-dd HH:mm:ss z"
+    timeZone     = "America/Los_Angeles"
+    indent       = "  "
+}
