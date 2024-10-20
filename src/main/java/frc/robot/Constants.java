@@ -6,6 +6,10 @@ package frc.robot;
 
 import static java.util.Map.entry;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+
 import java.util.Map;
 
 import edu.wpi.first.math.Matrix;

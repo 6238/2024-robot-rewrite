@@ -21,14 +21,14 @@ import org.photonvision.EstimatedRobotPose;
 
 public class VisionSubsystem extends SubsystemBase {
   private AprilTagFieldLayout layout;
-  private final Transform3d robotToCam_A =
+  private final Transform3d robotToCam_B =
       new Transform3d(
           new Translation3d(Inches.of(-13.5), Inches.of(-13.5), Inches.of(10.5)),
           new Rotation3d(
               Degrees.of(180).in(Radians),
               Degrees.of(-55).in(Radians),
               Degrees.of(210).in(Radians)));
-  private final Transform3d robotToCam_B =
+  private final Transform3d robotToCam_A =
       new Transform3d(
           new Translation3d(Inches.of(-13.5), Inches.of(13.5), Inches.of(10.5)),
           new Rotation3d(
@@ -41,6 +41,8 @@ public class VisionSubsystem extends SubsystemBase {
 
   private PopcornCamera camB;
   private SwerveSubsystem m_swerve;
+
+  private SwerveSubsystem swerve;
 
   /** Creates a new VisionSubsystem. */
   public VisionSubsystem(SwerveSubsystem swerve) {
