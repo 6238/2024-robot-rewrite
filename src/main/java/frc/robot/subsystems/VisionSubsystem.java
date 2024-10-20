@@ -40,10 +40,11 @@ public class VisionSubsystem extends SubsystemBase {
   private Optional<EstimatedRobotPose> poseB;
 
   private PopcornCamera camB;
+  private SwerveSubsystem m_swerve;
 
   /** Creates a new VisionSubsystem. */
-  public VisionSubsystem() {
-
+  public VisionSubsystem(SwerveSubsystem swerve) {
+    this.m_swerve = swerve;
     try {
       layout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
     } catch (IOException e) {
@@ -58,6 +59,12 @@ public class VisionSubsystem extends SubsystemBase {
   public void periodic() {
     poseA = camA.update();
     poseB = camB.update();
+    if (poseA.isPresent()) {
+      this.m_swerve.addVisionPose(poseA.get(), Constants.VISION_STDDEV);
+    }
+    if (poseB.isPresent()) {
+      this.m_swerve.addVisionPose(poseB.get(), Constants.VISION_STDDEV);
+    }
   }
 
   public Trigger hasPose() {

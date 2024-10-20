@@ -110,6 +110,9 @@ public class IntakeOuttakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putBoolean("limitSwitch1", limitSwitch1.get());
+    SmartDashboard.putBoolean("limitSwitch2", limitSwitch2.get());
+    SmartDashboard.putBoolean("limitSwitch3", limitSwitch3.get());
   }
 
   public Command setMotorsCommand(double intake, double outtake) {
@@ -128,6 +131,14 @@ public class IntakeOuttakeSubsystem extends SubsystemBase {
 
   public Command startOutakeCommand() {
     return this.setMotorsCommand(0.0, Constants.Speeds.OUTTAKE_SPEED);
+  }
+
+  public Command startOutakeFastCommand() {
+    return this.setMotorsCommand(0.0, 6000);
+  }
+
+  public Command shootCommand() {
+    return this.setMotorsCommand(-100, Constants.Speeds.OUTTAKE_SPEED);
   }
 
   public Command stopCommand() {

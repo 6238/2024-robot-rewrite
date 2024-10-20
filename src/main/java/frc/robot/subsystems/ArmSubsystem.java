@@ -240,7 +240,12 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    motor1.setControl(voltagePosition.withPosition(setpoint));
+    SmartDashboard.putNumber("setpoint", setpoint);
+    SmartDashboard.putNumber("setpointEncoder", sensorTalon.getSelectedSensorPosition());
+
+  }
 
   @Override
   public void simulationPeriodic() {
