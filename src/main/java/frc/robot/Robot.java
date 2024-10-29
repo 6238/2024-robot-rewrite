@@ -38,20 +38,11 @@ public class Robot extends TimedRobot {
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
-System.out.println("idanja   =============kfejjukwefjfewBUKFEBUWFEBkeufwkbjefbJEFWKEJWFKFEJWEWKJEU");
-    } else {
-      System.out.println("bjwrgjnwuerrKLGBwwlerkfklwehlifwhlifebnli ==========");
     }
   }
 
   @Override
-  public void autonomousPeriodic()
-   {
-
-        //  m_autonomousCommand.schedule();
-
-    System.out.println("running " + m_autonomousCommand.isScheduled() + " finsihed;"  +m_autonomousCommand.isFinished());
-   }
+  public void autonomousPeriodic(){}
 
   @Override
   public void autonomousExit() {}

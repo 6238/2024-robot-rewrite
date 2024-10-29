@@ -10,7 +10,6 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -123,32 +122,8 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.setHeadingCorrection(
         false); // Heading correction should only be used while controlling the robot via angle.
 
-    // Configure AutoBuilder last
-    AutoBuilder.configure(
-            this::getPose, // Robot pose supplier
-            this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-            this::getFieldVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) -> driveFieldOriented(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-            ),
-            config, // The robot configuration
-            () -> {
-              // Boolean supplier that controls when the path will be mirrored for the red alliance
-              // This will flip the path being followed to the red side of the field.
-              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
-            },
-            this // Reference to this subsystem to set requirements
-    );
-  
-      }
+    setupPathPlanner();
+  }
 
   // /**
   // * Construct the swerve drive.
@@ -393,6 +368,39 @@ public class SwerveSubsystem extends SubsystemBase {
     return swerveDrive.getPitch();
   }
 
+  /** Setup AutoBuilder for PathPlanner. */
+  public void setupPathPlanner() {
+    try {
+      RobotConfig config = RobotConfig.fromGUISettings();
+      // Configure AutoBuilder last
+      AutoBuilder.configure(
+            this::getPose, // Robot pose supplier
+            this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getFieldVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (speeds, feedforwards) -> driveFieldOriented(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+            ),
+            config, // The robot configuration
+            () -> {
+            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // This will flip the path being followed to the red side of the field.
+            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+            }
+            return false;
+            },
+            this // Reference to this subsystem to set requirements
+        );
+    } catch(Exception e){
+        DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder. Try checking version numbers and clean /deploy/* on the rio", e.getStackTrace());
+    }
+  }
+
   /**
    * Get the path follower with events.
    *
@@ -401,9 +409,16 @@ public class SwerveSubsystem extends SubsystemBase {
    * @return {@link AutoBuilder#followPath(PathPlannerPath)} path command.
    */
  
-  public Command getAutonomousCommand() {
-    return new PathPlannerAuto("forward auto");
-  }
+//   public Command getAutonomousCommand() {
+//     return new PathPlannerAuto("forward auto");
+//   }
+//   public Command getAutonomousCommand(String pathName, boolean setOdomToStart) {
+//     PathPlannerAuto path = new PathPlannerAuto(pathName);
+//     if (setOdomToStart) {
+//       resetOdometry(path.getStartingPose());
+//     }
+//     return path;
+//   }
 
   public void addVisionPose(EstimatedRobotPose pose, Matrix<N3, N1> stdev) {
     swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, stdev);

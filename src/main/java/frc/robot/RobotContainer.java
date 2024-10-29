@@ -135,7 +135,8 @@ public class RobotContainer {
     driverXbox.rightBumper().onTrue(intake.stopCommand());
     // Logic
     // Reset pose estimation when auton starts
-    RobotModeTriggers.autonomous().onTrue(swerve.resetGyroCommand());
+    // TODO: Why was this ever necessary, it just breaks stuff
+    // RobotModeTriggers.autonomous().onTrue(swerve.resetGyroCommand());
   }
 
   public Command getAutonomousCommand() {
