@@ -121,7 +121,9 @@ public class RobotContainer {
         .leftTrigger()
         .onTrue(intakeCommandSequence);
     
+    NamedCommands.registerCommand("lowerArm", arm.setAngleCommand(ArmStates.INTAKE));
     NamedCommands.registerCommand("intakeCommandSequence", intakeCommandSequence);
+    NamedCommands.registerCommand("spinup", intake.startOutakeCommand());
     NamedCommands.registerCommand("shootCommandSequence", new SequentialCommandGroup(
       intake.shootCommand(),
       new WaitCommand(0.4),
