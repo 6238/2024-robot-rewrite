@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "forward"
+            "pathName": "Example Path"
           }
         },
         {
@@ -19,7 +19,7 @@
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }

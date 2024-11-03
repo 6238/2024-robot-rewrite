@@ -24,12 +24,13 @@ public class RumbleSubsystem extends SubsystemBase {
     }
 
     public void periodic() {
-        rumbleTimer -= 0.05;
+      // TODO: optimize this. it was causing overruns every cycle --ajs 2024-11-03
+        // rumbleTimer -= 0.05;
         
-        if (rumbleTimer > 0) {
-            controller.getHID().setRumble(RumbleType.kBothRumble, 0.5);
-        } else {
-            controller.getHID().setRumble(RumbleType.kBothRumble, 0);
-        }
+        // if (rumbleTimer > 0) {
+        //     controller.getHID().setRumble(RumbleType.kBothRumble, 0.5);
+        // } else {
+        //     controller.getHID().setRumble(RumbleType.kBothRumble, 0);
+        // }
     }
 }
