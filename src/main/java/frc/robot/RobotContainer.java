@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -102,10 +103,7 @@ public class RobotContainer {
 
     // Intaking sequence - run each of these commands sequentially.
     // TODO: This sequence takes up the whole of subsystems. Triggers would be better.
-    driverXbox
-        .leftTrigger()
-        .onTrue(
-            new SequentialCommandGroup(
+    Command intakeCommandSequence = new SequentialCommandGroup(
                 // Lower the arm
                 arm.setAngleCommand(ArmStates.INTAKE),
                 // Start intaking, until we have a note
@@ -118,7 +116,17 @@ public class RobotContainer {
                 rumble.startRumble(0.5),
                 // Spin up the outtake - TODO: Is it intentional that we wait before spinning up?
                 // This seems like a timesuck to me --ajs
-                intake.startOutakeCommand()));
+                intake.startOutakeCommand());
+    driverXbox
+        .leftTrigger()
+        .onTrue(intakeCommandSequence);
+    
+    NamedCommands.registerCommand("intakeCommandSequence", intakeCommandSequence);
+    NamedCommands.registerCommand("shootCommandSequence", new SequentialCommandGroup(
+      intake.shootCommand(),
+      new WaitCommand(0.4),
+      intake.stopCommand()
+    )); 
 
     driverXbox.rightTrigger().onTrue(new SequentialCommandGroup(
       intake.shootCommand(),
@@ -133,16 +141,9 @@ public class RobotContainer {
 
     // Right bumper stops intake. This *should* interrupt the command group above.
     driverXbox.rightBumper().onTrue(intake.stopCommand());
-    // Logic
-    // Reset pose estimation when auton starts
-    // TODO: Why was this ever necessary, it just breaks stuff
-    // RobotModeTriggers.autonomous().onTrue(swerve.resetGyroCommand());
   }
 
   public Command getAutonomousCommand() {
      return autoChooser.getSelected();
-    //return new PathPlannerAuto("forward auto");
-
-  
   }
 }

@@ -379,8 +379,8 @@ public class SwerveSubsystem extends SubsystemBase {
             this::getFieldVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             (speeds, feedforwards) -> driveFieldOriented(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(1.0, 0.0005, 0.02), // Translation PID constants
+                    new PIDConstants(1.0, 0.0005, 0.02) // Rotation PID constants
             ),
             config, // The robot configuration
             () -> {
@@ -418,7 +418,7 @@ public class SwerveSubsystem extends SubsystemBase {
 //       resetOdometry(path.getStartingPose());
 //     }
 //     return path;
-//   }
+//   }  
 
   public void addVisionPose(EstimatedRobotPose pose, Matrix<N3, N1> stdev) {
     swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, stdev);
