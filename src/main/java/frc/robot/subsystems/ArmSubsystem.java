@@ -17,10 +17,16 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.Arm.ArmStates;
 import frc.robot.telemetry.Alert;
 import frc.robot.telemetry.Alert.AlertType;
 import java.util.Map;
@@ -34,7 +40,6 @@ public class ArmSubsystem extends SubsystemBase {
   // deadband, no limiting
   private final PositionVoltage voltagePosition =
       new PositionVoltage(0, 0, false, 0, 0, false, false, false);
-  // Brake request to set when neutral
 
   private double kP = 1.0;
   private double kI = 0.05;
@@ -59,6 +64,10 @@ public class ArmSubsystem extends SubsystemBase {
           entry(ArmStates.INTAKE, 22.0),
           entry(ArmStates.SHOOT, 45.0),
           entry(ArmStates.STOW, 85.0));
+
+  private final MechanismLigament2d measuredLigament;
+  private final MechanismLigament2d desiredLigament;
+
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
@@ -136,6 +145,14 @@ public class ArmSubsystem extends SubsystemBase {
     // doesn't move until we explicitly tell it to go somewhere else
     setpoint = startingPosition;
     SmartDashboard.putNumber("setpoint", setpoint);
+
+    // Initialize Mechanism2d
+    Mechanism2d mech = new Mechanism2d(4, 4);
+    MechanismRoot2d mechRoot = mech.getRoot("base", 2, 1);
+    measuredLigament = mechRoot.append(new MechanismLigament2d("measured", 1, 90));
+    desiredLigament = mechRoot.append(new MechanismLigament2d("desired", 1, 90, 3, new Color8Bit(Color.kBlue)));
+
+    SmartDashboard.putData("ArmMech2d", mech);
   }
 
   private double getArmAngle(double dist) {
@@ -241,10 +258,15 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    double pos = sensorTalon.getSelectedSensorPosition();
+
     motor1.setControl(voltagePosition.withPosition(setpoint));
     SmartDashboard.putNumber("setpoint", setpoint);
-    SmartDashboard.putNumber("setpointEncoder", sensorTalon.getSelectedSensorPosition());
+    SmartDashboard.putNumber("setpointEncoder", pos);
 
+    // Update Mechanism2d
+    measuredLigament.setAngle(pos);
+    desiredLigament.setAngle(setpoint);
   }
 
   @Override
